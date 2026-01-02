@@ -1,9 +1,0 @@
-package build
-
-import mill.*
-import scalalib.*
-
-val scalaVersion = "3.7.1"
-
-object backend extends ScalaModule{
-}
