@@ -1,5 +1,5 @@
 export default () => ({
-  port: parseInt(process.env.PORT ?? '5000'),
+  port: parseInt(process.env.PORT ?? "5000"),
   db: process.env.DB_URI,
   keycloak: {
     uri: process.env.KC_URI,

@@ -1,0 +1,34 @@
+{
+  "private": true,
+  "name": "MoveIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "client:dev": "yarn workspace client dev",
+    "client:build": "yarn workspace client build",
+    "client:start": "yarn workspace client start",
+    "server:dev": "yarn workspace server start:dev",
+    "server:prod": "yarn workspace server start:prod",
+    "server:test": "yarn workspace server test",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
+    "@types/node": "^25.6.2",
+    "@typescript-eslint/eslint-plugin": "^8.59.2",
+    "@typescript-eslint/parser": "^8.59.2",
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-promise": "^7.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.3",
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.3"
+  }
+}

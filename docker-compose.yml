@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - ./postgres_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "keycloak"
+      POSTGRES_USER: "keycloak"
+      POSTGRES_PASSWORD: "password"
+    ports:
+      - 5432:5432
+  keycloak:
+    build:
+      context: ./docker
+      dockerfile: Keycloak.dockerfile
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health/ready"]
+      interval: 15s
+      timeout: 2s
+      retries: 10
+    command: ["start-dev", "--http-port=4000", "--import-realm"]
+    ports:
+      - 4001:4000
+    depends_on:
+      - postgres_db
+
+volumes:
+  postgres_keycloak:
+    driver: local
