@@ -4,7 +4,7 @@ services:
   postgres:
     image: postgres
     volumes:
-      - ./postgres_db:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql
     environment:
       POSTGRES_DB: "keycloak"
       POSTGRES_USER: "keycloak"
@@ -24,8 +24,8 @@ services:
     ports:
       - 4001:4000
     depends_on:
-      - postgres_db
+      - postgres
 
 volumes:
-  postgres_keycloak:
+  moveit_data:
     driver: local
