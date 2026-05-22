@@ -5,12 +5,12 @@
     "packages/*"
   ],
   "scripts": {
-    "client:dev": "yarn workspace client dev",
-    "client:build": "yarn workspace client build",
-    "client:start": "yarn workspace client start",
-    "server:dev": "yarn workspace server start:dev",
-    "server:prod": "yarn workspace server start:prod",
-    "server:test": "yarn workspace server test",
+    "frontend:dev": "yarn workspace frontend dev",
+    "frontend:build": "yarn workspace frontend build",
+    "frontend:start": "yarn workspace frontend start",
+    "backend:dev": "yarn workspace backend start:dev",
+    "backend:prod": "yarn workspace backend start:prod",
+    "backend:test": "yarn workspace backend test",
     "prepare": "husky"
   },
   "devDependencies": {
