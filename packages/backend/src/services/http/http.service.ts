@@ -6,7 +6,7 @@ import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 export class HttpService {
   constructor() {}
 
-  async post<TRes, TBody>(
+  async post<TRes, TBody extends string>(
     url: string,
     body: TBody,
     config?: RequestInit,
@@ -14,7 +14,7 @@ export class HttpService {
     try {
       const response = await fetch(url, {
         method: "POST",
-        body: JSON.stringify(body),
+        body,
         ...config,
       });
 
@@ -22,8 +22,10 @@ export class HttpService {
         throw new Error(`HTTP error: ${response.status}`);
       }
 
-      const resp: unknown = await response.json();
-      return resp as TRes;
+      const resp = await response.text();
+      if (!resp) return null as TRes;
+
+      return JSON.parse(resp) as TRes;
     } catch (error: unknown) {
       const errMsg =
         error instanceof Error ? error.message : "External request failed";

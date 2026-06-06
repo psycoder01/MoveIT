@@ -2,8 +2,8 @@
 import { ConfigService } from "@nestjs/config";
 import { Injectable, Logger } from "@nestjs/common";
 
-import { HttpService } from "../http.service";
-import { EnvVariables } from "../../configs/env/env.types";
+import { HttpService } from "src/services/http/http.service";
+import { EnvVariables } from "src/configs/env/env.types";
 import {
   KeycloakUser,
   KeycloakTokenResponse,
@@ -34,7 +34,7 @@ export class KeycloakService {
   }
 
   private async getAdminToken(): Promise<string> {
-    const tokenUrl = `${this.baseUrl}/realms/master/protocol/openid-connect/token`;
+    const tokenUrl = `${this.baseUrl}/realms/${this.realm}/protocol/openid-connect/token`;
     const body = new URLSearchParams({
       grant_type: KeycloakGrantTypes.CLIENT_CREDENTIALS,
       client_id: this.clientId,

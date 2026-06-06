@@ -31,5 +31,5 @@ export interface KeycloakUser {
   firstName?: string;
   lastName?: string;
   enabled?: boolean;
-  credentials?: KeycloakUserCredentials;
+  credentials?: KeycloakUserCredentials[];
 }

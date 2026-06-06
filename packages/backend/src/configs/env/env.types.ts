@@ -4,8 +4,6 @@ export interface KeycloakOpenIDConnect {
   grantType: string;
   clientId: string;
   clientSecret: string;
-  masterUsername: string;
-  masterPassword: string;
 }
 
 export interface EnvVariables {
