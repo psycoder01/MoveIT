@@ -37,7 +37,7 @@ export class AuthController {
     return { message: "Login successful" };
   }
 
-  @Post("signout")
+  @Post("sign-out")
   async signout(
     @Req() req: e.Request,
     @Res({ passthrough: true }) res: e.Response,
