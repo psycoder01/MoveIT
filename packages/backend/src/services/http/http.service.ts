@@ -6,7 +6,7 @@ import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 export class HttpService {
   constructor() {}
 
-  async post<TRes, TBody extends string>(
+  async post<TRes, TBody extends BodyInit | null>(
     url: string,
     body: TBody,
     config?: RequestInit,

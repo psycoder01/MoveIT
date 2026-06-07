@@ -65,11 +65,7 @@ export class KeycloakService {
   async login(
     username: string,
     password: string,
-  ): Promise<{
-    access_token: string;
-    refresh_token: string;
-    expires_in: number;
-  }> {
+  ): Promise<KeycloakTokenResponse> {
     const tokenUrl = `${this.baseUrl}/realms/${this.realm}/protocol/openid-connect/token`;
     const body = new URLSearchParams({
       grant_type: KeycloakGrantTypes.PASSWORD,
@@ -79,15 +75,14 @@ export class KeycloakService {
       password,
     });
 
-    const response = await this.httpService.post<KeycloakTokenResponse, string>(
-      tokenUrl,
-      body.toString(),
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
+    const response = await this.httpService.post<
+      KeycloakTokenResponse,
+      BodyInit
+    >(tokenUrl, body, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-    );
+    });
 
     this.logger.log(`User logged in: ${username}`);
     return response;

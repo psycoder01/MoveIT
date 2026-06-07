@@ -12,7 +12,7 @@ export class AuthService {
   async signUp(signUpDto: SignUpDto) {
     const { username, email, password, firstName, lastName } = signUpDto;
 
-    const user = await this.keycloakService.createUser({
+    return this.keycloakService.createUser({
       username,
       email,
       enabled: true,
@@ -20,11 +20,6 @@ export class AuthService {
       lastName,
       credentials: [{ value: password, temporary: false, type: "password" }],
     });
-
-    return {
-      message: "User registered successfully",
-      user,
-    };
   }
 
   async signIn(signInDto: SignInDto) {
@@ -37,8 +32,12 @@ export class AuthService {
     }
 
     return {
-      message: "User signed in successfully",
-      access_token: token,
+      access_token: token.access_token,
+      refresh_token: token.refresh_token,
     };
+  }
+
+  async signout(refreshToken: string) {
+    return this.keycloakService.logout(refreshToken);
   }
 }
