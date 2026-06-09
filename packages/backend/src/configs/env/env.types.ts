@@ -6,8 +6,17 @@ export interface KeycloakOpenIDConnect {
   clientSecret: string;
 }
 
+export interface DbVariables {
+  host: string;
+  port: string;
+  username: string;
+  password: string;
+  database: string;
+  synchronize: string;
+}
+
 export interface EnvVariables {
   port: number;
-  db: string;
+  db: DbVariables;
   keycloak: KeycloakOpenIDConnect;
 }

@@ -1,7 +1,11 @@
 export default () => {
   const requiredEnvVars = [
     "PORT",
-    "DB_URI",
+    "DB_HOST",
+    "DB_PORT",
+    "DB_USERNAME",
+    "DB_PASSWORD",
+    "DB_SYNCHRONIZE",
     "KC_URI",
     "KC_REALM",
     "KC_CLIENT_ID",
@@ -20,7 +24,13 @@ export default () => {
 
   return {
     port: parseInt(process.env.PORT ?? "5000"),
-    db: process.env.DB_URI,
+    db: {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      synchronize: process.env.DB_SYNCHRONIZE,
+    },
     keycloak: {
       uri: process.env.KC_URI,
       realm: process.env.KC_REALM,
