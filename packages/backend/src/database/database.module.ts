@@ -21,7 +21,7 @@ import { EnvVariables } from "src/configs/env/env.types";
           username: db.username,
           password: db.password,
           database: db.database,
-          entities: [__dirname + "/../**/*.entity{.ts,.js}"],
+          entities: [],
           synchronize: db.synchronize === "true",
         };
       },

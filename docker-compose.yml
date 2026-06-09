@@ -5,6 +5,7 @@ services:
     image: postgres
     volumes:
       - ./postgres:/var/lib/postgresql
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_DB: "keycloak"
       POSTGRES_USER: "keycloak"
