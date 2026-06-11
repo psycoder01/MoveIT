@@ -1,4 +1,10 @@
-import { IsString, IsOptional, IsEnum, IsBoolean, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsBoolean,
+  IsUUID,
+} from "class-validator";
 
 export class CreateOrganizationDto {
   @IsString()
@@ -15,7 +21,7 @@ export class CreateOrganizationDto {
   @IsString()
   logo_url?: string;
 
-  @IsEnum(['free', 'basic', 'pro', 'enterprise'])
+  @IsEnum(["free", "basic", "pro", "enterprise"])
   plan: string;
 
   @IsOptional()
