@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigService } from "@nestjs/config";
+
 import { EnvVariables } from "src/configs/env/env.types";
 
 @Module({
@@ -21,7 +22,6 @@ import { EnvVariables } from "src/configs/env/env.types";
           username: db.username,
           password: db.password,
           database: db.database,
-          entities: [],
           synchronize: db.synchronize === "true",
         };
       },

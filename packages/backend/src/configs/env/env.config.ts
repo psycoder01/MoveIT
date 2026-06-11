@@ -5,6 +5,7 @@ export default () => {
     "DB_PORT",
     "DB_USERNAME",
     "DB_PASSWORD",
+    "DB_PASSWORD",
     "DB_SYNCHRONIZE",
     "KC_URI",
     "KC_REALM",
@@ -29,6 +30,7 @@ export default () => {
       port: process.env.DB_PORT,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
       synchronize: process.env.DB_SYNCHRONIZE,
     },
     keycloak: {
