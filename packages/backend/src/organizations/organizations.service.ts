@@ -35,15 +35,10 @@ export class OrganizationsService {
   }
 
   async findByUserId(userId: string) {
-    const organization = await this.organizationsRepository.findOne({
+    const organizations = await this.organizationsRepository.find({
       where: { created_by: userId },
     });
-    if (!organization) {
-      throw new NotFoundException(
-        `Organizations with user id ${userId} not found`,
-      );
-    }
-    return organization;
+    return organizations;
   }
 
   async update(id: string, updateOrganizationDto: UpdateOrganizationDto) {

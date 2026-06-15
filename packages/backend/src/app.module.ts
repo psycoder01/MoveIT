@@ -4,9 +4,16 @@ import envModule from "src/configs/env/env.module";
 import { DatabaseModule } from "src/database/database.module";
 
 import { AuthModule } from "src/auth/auth.module";
+import { UsersModule } from "src/users/users.module";
 import { OrganizationsModule } from "src/organizations/organizations.module";
 
 @Module({
-  imports: [envModule, DatabaseModule, AuthModule, OrganizationsModule],
+  imports: [
+    envModule,
+    DatabaseModule,
+    AuthModule,
+    OrganizationsModule,
+    UsersModule,
+  ],
 })
 export class AppModule {}

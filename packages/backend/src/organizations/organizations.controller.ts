@@ -20,8 +20,13 @@ export class OrganizationsController {
     return this.organizationsService.create(createOrganizationDto);
   }
 
-  @Get(":userId")
-  findOne(@Param("userId") userId: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
+    return this.organizationsService.findOne(id);
+  }
+
+  @Get("/user/:userId")
+  findByUserId(@Param("userId") userId: string) {
     return this.organizationsService.findByUserId(userId);
   }
 
