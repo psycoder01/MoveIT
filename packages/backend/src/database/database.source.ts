@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
 import { DataSource } from "typeorm";
 
+import { User } from "src/users/entities/user.entity";
+import { Organization } from "src/organizations/entities/organization.entity";
+
 dotenv.config({ path: [".env.prod", ".env.dev", ".env"] });
 
 export default new DataSource({
@@ -11,6 +14,6 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   synchronize: false,
-  entities: ["src/**/*.entity.ts"],
+  entities: [Organization, User],
   migrations: ["src/database/migrations/*.ts"],
 });

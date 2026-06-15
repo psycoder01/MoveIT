@@ -1,6 +1,6 @@
 import cookieParser from "cookie-parser";
 import { NestFactory } from "@nestjs/core";
-import { VersioningType } from "@nestjs/common";
+import { VersioningType, ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 import { AppModule } from "./app.module";
@@ -15,6 +15,14 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: "1",
   });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle("MoveIT APIs")

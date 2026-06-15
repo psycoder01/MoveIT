@@ -1,4 +1,23 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { CreateOrganizationDto } from "src/organizations/dto/create-organization.dto";
+import { IsBoolean, IsEnum, IsOptional, IsString } from "class-validator";
 
-export class UpdateOrganizationDto extends PartialType(CreateOrganizationDto) {}
+export class UpdateOrganizationDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  logo_url?: string;
+
+  @IsOptional()
+  @IsEnum(["free", "basic", "pro", "enterprise"])
+  plan?: "free" | "basic" | "pro" | "enterprise";
+
+  @IsOptional()
+  @IsBoolean()
+  is_active?: boolean;
+}
