@@ -4,14 +4,14 @@ import {
   Post,
   Body,
   Param,
-  Put,
+  Patch,
   Delete,
 } from "@nestjs/common";
 import { OrganizationsService } from "./organizations.service";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 
-@Controller("organizations")
+@Controller("organization")
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
@@ -20,17 +20,12 @@ export class OrganizationsController {
     return this.organizationsService.create(createOrganizationDto);
   }
 
-  @Get()
-  findAll() {
-    return this.organizationsService.findAll();
+  @Get(":userId")
+  findOne(@Param("userId") userId: string) {
+    return this.organizationsService.findByUserId(userId);
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.organizationsService.findOne(id);
-  }
-
-  @Put(":id")
+  @Patch(":id")
   update(
     @Param("id") id: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto,
