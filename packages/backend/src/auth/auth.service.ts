@@ -4,15 +4,19 @@ import { SignUpDto } from "src/auth/dto/sign-up.dto";
 import { SignInDto } from "src/auth/dto/sign-in.dto";
 
 import { KeycloakService } from "src/services/keycloak/keycloak.service";
+import { UsersService } from "src/users/users.service";
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly keycloakService: KeycloakService) {}
+  constructor(
+    private readonly keycloakService: KeycloakService,
+    private readonly usersService: UsersService,
+  ) {}
 
   async signUp(signUpDto: SignUpDto) {
     const { username, email, password, firstName, lastName } = signUpDto;
 
-    return this.keycloakService.createUser({
+    await this.keycloakService.createUser({
       username,
       email,
       enabled: true,
@@ -20,6 +24,15 @@ export class AuthService {
       lastName,
       credentials: [{ value: password, temporary: false, type: "password" }],
     });
+
+    await this.usersService.create({
+      email,
+      username,
+      password_hash: password,
+      full_name: `${firstName} ${lastName}`,
+    });
+
+    return { message: "User created successfully" };
   }
 
   async signIn(signInDto: SignInDto) {

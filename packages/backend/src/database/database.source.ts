@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 import { DataSource } from "typeorm";
 
-import { User } from "src/users/entities/user.entity";
-import { Organization } from "src/organizations/entities/organization.entity";
+import { User } from "../users/entities/user.entity";
+import { Organization } from "../organizations/entities/organization.entity";
 
 dotenv.config({ path: [".env.prod", ".env.dev", ".env"] });
 
