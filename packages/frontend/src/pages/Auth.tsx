@@ -7,6 +7,7 @@ import { LogoBox } from "src/components/styled/LogoBox";
 import { Logo } from "src/components/styled/Logo";
 import { StyledTabs } from "src/components/styled/StyledTabs";
 import { MIButton } from "src/components/base/MIButton";
+import { MISnackbar } from "src/components/base/MISnackbar";
 
 import { LoginSection } from "src/components/derived/LoginSection";
 import { SignupSection } from "src/components/derived/SignupSection";
@@ -25,6 +26,11 @@ const Auth: React.FC = () => {
     firstName: "",
     lastName: "",
   });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info" as "success" | "error" | "info",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -41,11 +47,28 @@ const Auth: React.FC = () => {
     try {
       const { email, password, firstName, lastName, username } = formData;
 
-      if (tabValue === 0) await login({ username, password });
-      if (tabValue === 1)
+      if (tabValue === 0) {
+        await login({ username, password });
+        setSnackbar({
+          open: true,
+          message: "Sign in successful.",
+          severity: "success",
+        });
+      }
+      if (tabValue === 1) {
         await signup({ firstName, lastName, username, email, password });
+        setSnackbar({
+          open: true,
+          message: "Sign Up successful.",
+          severity: "success",
+        });
+      }
     } catch (err) {
-      console.log("error");
+      setSnackbar({
+        open: true,
+        message: "Error occurred.",
+        severity: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -53,6 +76,10 @@ const Auth: React.FC = () => {
 
   const handleTabChange = (_: unknown, newValue: number) => {
     setTabValue(newValue);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -92,6 +119,7 @@ const Auth: React.FC = () => {
         <Divider sx={{ my: 3 }}>OR</Divider>
         <SocialSection />
       </StyledPaper>
+      <MISnackbar {...snackbar} handleCloseSnackbar={handleCloseSnackbar} />
     </StyledContainer>
   );
 };
