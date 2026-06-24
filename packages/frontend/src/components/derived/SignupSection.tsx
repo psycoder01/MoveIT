@@ -6,25 +6,23 @@ import { MITextField } from "src/components/base/MITextField";
 import { FormSection } from "src/components/styled/FormSection";
 
 interface SignupSectionProps {
-  name: string;
+  firstName: string;
+  lastName: string;
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
-  onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onConfirmPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const SignupSection: React.FC<SignupSectionProps> = ({
-  name,
+  firstName,
+  lastName,
+  username,
   email,
   password,
   confirmPassword,
-  onNameChange,
-  onEmailChange,
-  onPasswordChange,
-  onConfirmPasswordChange,
+  onChange,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -41,32 +39,48 @@ export const SignupSection: React.FC<SignupSectionProps> = ({
     <>
       <FormSection>
         <MITextField
-          label="Full Name"
-          name="name"
-          value={name}
-          onChange={onNameChange}
+          label="First Name"
+          name="firstName"
+          value={firstName}
+          onChange={onChange}
           required
         />
       </FormSection>
-
+      <FormSection>
+        <MITextField
+          label="Last Name"
+          name="lastName"
+          value={lastName}
+          onChange={onChange}
+          required
+        />
+      </FormSection>
+      <FormSection>
+        <MITextField
+          label="Username"
+          name="username"
+          value={username}
+          onChange={onChange}
+          required
+        />
+      </FormSection>
       <FormSection>
         <MITextField
           label="Email"
           name="email"
           type="email"
           value={email}
-          onChange={onEmailChange}
+          onChange={onChange}
           required
         />
       </FormSection>
-
       <FormSection>
         <MITextField
           label="Password"
           name="password"
           type={showPassword ? "text" : "password"}
           value={password}
-          onChange={onPasswordChange}
+          onChange={onChange}
           required
           slotProps={{
             input: {
@@ -85,14 +99,13 @@ export const SignupSection: React.FC<SignupSectionProps> = ({
           }}
         />
       </FormSection>
-
       <FormSection>
         <MITextField
           label="Confirm Password"
           name="confirmPassword"
           type={showConfirmPassword ? "text" : "password"}
           value={confirmPassword}
-          onChange={onConfirmPasswordChange}
+          onChange={onChange}
           required
           slotProps={{
             input: {

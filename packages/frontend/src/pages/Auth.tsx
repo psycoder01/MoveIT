@@ -12,13 +12,18 @@ import { LoginSection } from "src/components/derived/LoginSection";
 import { SignupSection } from "src/components/derived/SignupSection";
 import { SocialSection } from "src/components/derived/SocialSection";
 
+import { login, signup } from "@/api/auth";
+
 const Auth: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [formData, setFormData] = useState({
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
-    name: "",
+    firstName: "",
+    lastName: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,10 +33,22 @@ const Auth: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", formData);
+
+    setLoading(true);
+
+    try {
+      const { email, password, firstName, lastName, username } = formData;
+
+      if (tabValue === 0) await login({ username, password });
+      if (tabValue === 1)
+        await signup({ firstName, lastName, username, email, password });
+    } catch (err) {
+      console.log("error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleTabChange = (_: unknown, newValue: number) => {
@@ -53,24 +70,22 @@ const Auth: React.FC = () => {
         <form onSubmit={handleSubmit}>
           {tabValue === 1 ? (
             <SignupSection
-              name={formData.name}
+              firstName={formData.firstName}
+              lastName={formData.lastName}
+              username={formData.username}
               email={formData.email}
               password={formData.password}
               confirmPassword={formData.confirmPassword}
-              onNameChange={handleChange}
-              onEmailChange={handleChange}
-              onPasswordChange={handleChange}
-              onConfirmPasswordChange={handleChange}
+              onChange={handleChange}
             />
           ) : (
             <LoginSection
-              email={formData.email}
+              username={formData.username}
               password={formData.password}
-              onEmailChange={handleChange}
-              onPasswordChange={handleChange}
+              onChange={handleChange}
             />
           )}
-          <MIButton type="submit">
+          <MIButton type="submit" loading={loading}>
             {tabValue === 0 ? "Log In" : "Sign Up"}
           </MIButton>
         </form>

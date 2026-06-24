@@ -6,17 +6,15 @@ import { MITextField } from "src/components/base/MITextField";
 import { FormSection } from "src/components/styled/FormSection";
 
 interface LoginSectionProps {
-  email: string;
+  username: string;
   password: string;
-  onEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const LoginSection: React.FC<LoginSectionProps> = ({
-  email,
+  username,
   password,
-  onEmailChange,
-  onPasswordChange,
+  onChange,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -28,40 +26,39 @@ export const LoginSection: React.FC<LoginSectionProps> = ({
     <>
       <FormSection>
         <MITextField
-          label="Email"
-          name="email"
-          type="email"
-          value={email}
-          onChange={onEmailChange}
+          label="Username"
+          name="username"
+          value={username}
+          onChange={onChange}
           required
         />
       </FormSection>
-
       <FormSection>
         <MITextField
           label="Password"
           name="password"
           type={showPassword ? "text" : "password"}
           value={password}
-          onChange={onPasswordChange}
+          onChange={onChange}
           required
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
           }}
         />
       </FormSection>
-
-      <Box display="flex" justifyContent="flex-end" mb={2}>
+      <Box>
         <Link href="#" variant="body2" sx={{ color: "#0079bf" }}>
           Forgot password?
         </Link>
