@@ -6,26 +6,18 @@ const server = serve({
     // Serve index.html for all unmatched routes.
     "/*": index,
 
-    "/api/hello": {
-      async GET(req) {
-        return Response.json({
-          message: "Hello, world!",
-          method: "GET",
-        });
-      },
-      async PUT(req) {
-        return Response.json({
-          message: "Hello, world!",
-          method: "PUT",
-        });
-      },
-    },
+    "/api/*": async (req: Request) => {
+      const url = new URL(req.url);
 
-    "/api/hello/:name": async (req) => {
-      const name = req.params.name;
-      return Response.json({
-        message: `Hello, ${name}!`,
+      const targetUrl =
+        process?.env?.BUN_PUBLIC_API_BASE_URL + url.pathname + url.search;
+
+      const response = await fetch(targetUrl, {
+        method: req.method,
+        headers: req.headers,
+        body: req.body,
       });
+      return response;
     },
   },
 
