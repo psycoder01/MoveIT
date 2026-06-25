@@ -2,15 +2,21 @@ import { createBrowserRouter, type RouteObject } from "react-router";
 
 import Auth from "src/pages/Auth";
 import Dashboard from "src/pages/Dashboard";
+import ProtectedRoute from "src/pages/ProtectedRoute";
 
 const routes = [
   {
     path: "/auth",
-    Component: Auth,
+    element: <Auth />,
   },
   {
-    path: "/",
-    Component: Dashboard,
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
+    ],
   },
   ,
 ] as RouteObject[];

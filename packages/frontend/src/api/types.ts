@@ -11,3 +11,5 @@ export interface SignUpCredentials extends LoginCredentials {
 
 export interface LoginResponse {}
 export interface SignUpResponse {}
+
+export interface SessionResponse {}

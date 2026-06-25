@@ -65,7 +65,7 @@ const Auth: React.FC = () => {
           message: "Sign Up successful.",
           severity: "success",
         });
-        navigate("/dashboard");
+        navigate("/auth");
       }
     } catch (err) {
       setSnackbar({

@@ -7,29 +7,41 @@ import {
   CardContent,
   TextField,
   Button,
-  Alert,
 } from "@mui/material";
+
+import { signout } from "@/api/auth";
+
 import { MIButton } from "src/components/base/MIButton";
+import { MISnackbar } from "src/components/base/MISnackbar";
 
 const Dashboard: React.FC = () => {
   const [orgName, setOrgName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info" as "success" | "error" | "info",
+  });
   const navigate = useNavigate();
 
   const handleCreateOrganization = async () => {
     if (!orgName.trim()) return;
 
     setLoading(true);
-    setMessage(null);
 
     try {
       console.log({ orgName });
+      setSnackbar({
+        open: true,
+        message: "Create organization successful.",
+        severity: "success",
+      });
     } catch (error) {
-      setMessage({ type: "error", text: "An error occurred" });
+      setSnackbar({
+        open: true,
+        message: "Error occurred.",
+        severity: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -37,10 +49,24 @@ const Dashboard: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      await signout();
+      setSnackbar({
+        open: true,
+        message: "Sign out successful.",
+        severity: "success",
+      });
       navigate("/auth");
     } catch (error) {
-      console.error("Logout error:", error);
+      setSnackbar({
+        open: true,
+        message: "Error occurred.",
+        severity: "error",
+      });
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -80,11 +106,6 @@ const Dashboard: React.FC = () => {
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             Create your organization
           </Typography>
-          {message && (
-            <Alert severity={message.type} sx={{ mb: 2 }}>
-              {message.text}
-            </Alert>
-          )}
           <Box sx={{ display: "flex", gap: 2 }}>
             <TextField
               label="Organization Name"
@@ -103,6 +124,7 @@ const Dashboard: React.FC = () => {
           </Box>
         </CardContent>
       </Card>
+      <MISnackbar {...snackbar} handleCloseSnackbar={handleCloseSnackbar} />
     </Box>
   );
 };
