@@ -17,11 +17,13 @@
     "ky": "^2.0.2",
     "react": "^19",
     "react-dom": "^19",
+    "react-router": "^8.0.1",
     "styled-components": "^6.4.2"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/react": "^19",
-    "@types/react-dom": "^19"
+    "@types/react-dom": "^19",
+    "@types/react-router": "^5.1.20"
   }
 }

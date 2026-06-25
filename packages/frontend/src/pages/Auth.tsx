@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Tab, Divider } from "@mui/material";
+import { useNavigate } from "react-router";
 
 import { StyledContainer } from "src/components/styled/StyledContainer";
 import { StyledPaper } from "src/components/styled/StyledPaper";
@@ -16,6 +17,7 @@ import { SocialSection } from "src/components/derived/SocialSection";
 import { login, signup } from "@/api/auth";
 
 const Auth: React.FC = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [formData, setFormData] = useState({
@@ -54,6 +56,7 @@ const Auth: React.FC = () => {
           message: "Sign in successful.",
           severity: "success",
         });
+        navigate("/dashboard");
       }
       if (tabValue === 1) {
         await signup({ firstName, lastName, username, email, password });
@@ -62,6 +65,7 @@ const Auth: React.FC = () => {
           message: "Sign Up successful.",
           severity: "success",
         });
+        navigate("/dashboard");
       }
     } catch (err) {
       setSnackbar({

@@ -1,11 +1,7 @@
-import Auth from "src/pages/Auth";
+import { RouterProvider } from "react-router";
+
+import router from "src/pages/routes";
 
 export function App() {
-  return (
-    <div className="app">
-      <Auth />
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
-
-export default App;
