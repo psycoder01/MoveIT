@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/only-throw-error */
 import { ConfigService } from "@nestjs/config";
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 
 import { HttpService } from "src/services/http/http.service";
 import { EnvVariables } from "src/configs/env/env.types";
@@ -8,6 +8,7 @@ import {
   KeycloakUser,
   KeycloakTokenResponse,
   KeycloakGrantTypes,
+  KeycloakUserInfo,
 } from "./keycloak.types";
 
 @Injectable()
@@ -50,16 +51,30 @@ export class KeycloakService {
       .then((resp) => resp.access_token);
   }
 
-  async createUser(userData: KeycloakUser): Promise<void> {
+  async createUser(userData: KeycloakUser): Promise<string> {
     const token = await this.getAdminToken();
     const url = `${this.baseUrl}/admin/realms/${this.realm}/users`;
 
-    return this.httpService.post<void, string>(url, JSON.stringify(userData), {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const response = await this.httpService.postAndResponeHeaders<void, string>(
+      url,
+      JSON.stringify(userData),
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
+
+    const locationHeader = response.headers.get("location");
+
+    if (!locationHeader)
+      throw new Error("Keycloak did not return Location header");
+
+    const userId = locationHeader.split("/").pop();
+    if (!userId) throw new Error("No sub id in the location header");
+
+    return userId;
   }
 
   async login(
@@ -127,6 +142,18 @@ export class KeycloakService {
         },
       },
     );
+
+    return response;
+  }
+
+  async getUserInfo(accessToken: string): Promise<KeycloakUserInfo> {
+    const userInfoUrl = `${this.baseUrl}/realms/${this.realm}/protocol/openid-connect/userinfo`;
+
+    const response = await this.httpService.get<KeycloakUserInfo>(userInfoUrl, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
     return response;
   }

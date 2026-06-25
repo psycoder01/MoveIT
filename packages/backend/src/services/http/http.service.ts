@@ -2,6 +2,12 @@
 
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 
+interface HttpResponse<T> {
+  data: T;
+  headers: Headers;
+  status: number;
+}
+
 @Injectable()
 export class HttpService {
   constructor() {}
@@ -26,6 +32,36 @@ export class HttpService {
       if (!resp) return null as TRes;
 
       return JSON.parse(resp) as TRes;
+    } catch (error: unknown) {
+      const errMsg =
+        error instanceof Error ? error.message : "External request failed";
+      throw new HttpException(errMsg, HttpStatus.BAD_GATEWAY);
+    }
+  }
+
+  async postAndResponeHeaders<TRes, TBody extends BodyInit | null>(
+    url: string,
+    body: TBody,
+    config?: RequestInit,
+  ): Promise<HttpResponse<TRes>> {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        body,
+        ...config,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+
+      const resp = await response.text();
+
+      return {
+        data: JSON.parse(resp || null) as TRes,
+        headers: response.headers,
+        status: response.status,
+      };
     } catch (error: unknown) {
       const errMsg =
         error instanceof Error ? error.message : "External request failed";

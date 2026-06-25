@@ -16,7 +16,7 @@ export class AuthService {
   async signUp(signUpDto: SignUpDto) {
     const { username, email, password, firstName, lastName } = signUpDto;
 
-    await this.keycloakService.createUser({
+    const subId = await this.keycloakService.createUser({
       username,
       email,
       enabled: true,
@@ -26,6 +26,7 @@ export class AuthService {
     });
 
     await this.usersService.create({
+      id: subId,
       email,
       username,
       password_hash: password,
