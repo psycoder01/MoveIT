@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+} from "@nestjs/common";
 
 import { SignUpDto } from "src/auth/dto/sign-up.dto";
 import { SignInDto } from "src/auth/dto/sign-in.dto";
@@ -53,5 +57,13 @@ export class AuthService {
 
   async signout(refreshToken: string) {
     return this.keycloakService.logout(refreshToken);
+  }
+
+  async getUser(userId: string) {
+    const user = await this.usersService.findById(userId);
+
+    if (!user) throw new NotFoundException("User not found");
+
+    return user;
   }
 }

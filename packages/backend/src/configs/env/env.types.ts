@@ -4,6 +4,7 @@ export interface KeycloakOpenIDConnect {
   grantType: string;
   clientId: string;
   clientSecret: string;
+  issuer: string;
 }
 
 export interface DbVariables {

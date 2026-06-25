@@ -11,6 +11,7 @@ export default () => {
     "KC_REALM",
     "KC_CLIENT_ID",
     "KC_CLIENT_SECRET",
+    "KC_ISSUER",
   ];
 
   const missingVars = requiredEnvVars.filter(
@@ -38,6 +39,7 @@ export default () => {
       realm: process.env.KC_REALM,
       clientId: process.env.KC_CLIENT_ID,
       clientSecret: process.env.KC_CLIENT_SECRET,
+      issuer: process.env.KC_ISSUER,
     },
   };
 };

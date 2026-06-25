@@ -8,10 +8,11 @@ import { HttpService } from "src/services/http/http.service";
 import { KeycloakService } from "src/services/keycloak/keycloak.service";
 
 import { UsersModule } from "src/users/users.module";
+import { KeycloakStrategy } from "src/auth/guards/keycloak.strategy";
 
 @Module({
   imports: [ConfigModule, UsersModule],
   controllers: [AuthController],
-  providers: [HttpService, KeycloakService, AuthService],
+  providers: [HttpService, KeycloakService, KeycloakStrategy, AuthService],
 })
 export class AuthModule {}
