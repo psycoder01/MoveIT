@@ -66,7 +66,7 @@ export class AuthController {
     @Req() req: AuthRequest,
     @Res({ passthrough: true }) res: e.Response,
   ) {
-    if(!req.user) throw Error("No user id")
+    if (!req.user) throw Error("No user id");
     const user = await this.authService.getUser(req.user.userId);
 
     return { data: user };

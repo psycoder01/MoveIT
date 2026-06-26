@@ -1,8 +1,8 @@
-export enum OrganizationPlan{
-    FREE = "free", 
-    BASIC = "basic",
-    PRO = "pro",
-    ENTERPRISE = "enterprise"
+export enum OrganizationPlan {
+  FREE = "free",
+  BASIC = "basic",
+  PRO = "pro",
+  ENTERPRISE = "enterprise",
 }
 
 export interface Organization {

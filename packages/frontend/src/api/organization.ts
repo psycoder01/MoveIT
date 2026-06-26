@@ -2,17 +2,14 @@ import { network } from "src/api/network";
 import {
   type Organization,
   type OrganizationWithMetadata,
-  type UpdateOrganization
-
+  type UpdateOrganization,
 } from "src/types/organization";
 
 const routes = {
   organization: "organization",
   organizationById: (id: string) => `organization/${id}`,
-  organizationByUserId: ( userId: string) =>
-    `organization/user/${userId}`,
+  organizationByUserId: (userId: string) => `organization/user/${userId}`,
 };
-
 
 export const getOrganizationByUserId = async (
   userId: string,
