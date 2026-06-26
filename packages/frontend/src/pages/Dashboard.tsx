@@ -5,7 +5,6 @@ import {
   Typography,
   Card,
   CardContent,
-  TextField,
   Button,
   Dialog,
   DialogTitle,
@@ -24,6 +23,7 @@ import { OrganizationPlan } from "@/types/organization";
 import { MIButton } from "src/components/base/MIButton";
 import { MISnackbar } from "src/components/base/MISnackbar";
 import MITextField from "@/components/base/MITextField";
+import { useAuthStore } from "@/context/authStore";
 
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -40,6 +40,7 @@ const Dashboard: React.FC = () => {
     severity: "info" as "success" | "error" | "info",
   });
   const navigate = useNavigate();
+  const { user, setUser } = useAuthStore();
 
   const handleCreateOrganization = async () => {
     if (!orgData.name.trim() || !orgData.slug.trim()) return;
@@ -47,7 +48,12 @@ const Dashboard: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await createOrganization({...orgData, created_by: "user"});
+      if (!user?.id) throw new Error("User not logged.");
+
+      await createOrganization({
+        ...orgData,
+        created_by: user.id,
+      });
       setSnackbar({
         open: true,
         message: "Organization created successfully.",
@@ -74,6 +80,7 @@ const Dashboard: React.FC = () => {
   const handleLogout = async () => {
     try {
       await signout();
+      setUser(null);
       setSnackbar({
         open: true,
         message: "Sign out successful.",
@@ -147,7 +154,12 @@ const Dashboard: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Dialog open={modalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
+      <Dialog
+        open={modalOpen}
+        onClose={handleCloseModal}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Create Organization</DialogTitle>
         <DialogContent dividers>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
@@ -169,7 +181,9 @@ const Dashboard: React.FC = () => {
             <MITextField
               label="Description"
               value={orgData.description}
-              onChange={(e) => setOrgData({ ...orgData, description: e.target.value })}
+              onChange={(e) =>
+                setOrgData({ ...orgData, description: e.target.value })
+              }
               fullWidth
               multiline
               rows={3}
@@ -179,20 +193,29 @@ const Dashboard: React.FC = () => {
               <Select
                 value={orgData.plan}
                 label="Plan"
-                onChange={(e) => setOrgData({ ...orgData, plan: e.target.value as OrganizationPlan })}
+                onChange={(e) =>
+                  setOrgData({
+                    ...orgData,
+                    plan: e.target.value as OrganizationPlan,
+                  })
+                }
               >
                 <MenuItem value={OrganizationPlan.FREE}>Free</MenuItem>
                 <MenuItem value={OrganizationPlan.BASIC}>Basic</MenuItem>
                 <MenuItem value={OrganizationPlan.PRO}>Pro</MenuItem>
-                <MenuItem value={OrganizationPlan.ENTERPRISE}>Enterprise</MenuItem>
+                <MenuItem value={OrganizationPlan.ENTERPRISE}>
+                  Enterprise
+                </MenuItem>
               </Select>
             </FormControl>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" onClick={handleCloseModal}>Cancel</Button>
-          <Button 
-            onClick={handleCreateOrganization} 
+          <Button variant="outlined" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleCreateOrganization}
             variant="contained"
             disabled={!orgData.name.trim() || !orgData.slug.trim() || loading}
           >

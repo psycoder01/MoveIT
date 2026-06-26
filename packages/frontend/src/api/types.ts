@@ -1,3 +1,5 @@
+import type { User } from "@/types/user";
+
 export interface LoginCredentials {
   username: string;
   password: string;
@@ -12,4 +14,6 @@ export interface SignUpCredentials extends LoginCredentials {
 export interface LoginResponse {}
 export interface SignUpResponse {}
 
-export interface SessionResponse {}
+export interface SessionResponse {
+  data: User
+}

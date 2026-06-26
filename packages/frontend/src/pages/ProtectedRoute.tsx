@@ -2,18 +2,19 @@ import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router";
 
 import { session } from "@/api/auth";
+import { useAuthStore } from "@/context/authStore";
 
 export default function ProtectedRoute() {
   const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, setUser } = useAuthStore();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const user = await session();
-        setIsAuthenticated(true);
+        setUser(user.data);
       } catch (err) {
-        setIsAuthenticated(false);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -26,7 +27,7 @@ export default function ProtectedRoute() {
     return <div>Loading...</div>;
   }
 
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/auth" replace />;
   }
 
