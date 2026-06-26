@@ -7,16 +7,33 @@ import {
   CardContent,
   TextField,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@mui/material";
 
 import { signout } from "@/api/auth";
+import { createOrganization } from "@/api/organization";
+import { OrganizationPlan } from "@/types/organization";
 
 import { MIButton } from "src/components/base/MIButton";
 import { MISnackbar } from "src/components/base/MISnackbar";
+import MITextField from "@/components/base/MITextField";
 
 const Dashboard: React.FC = () => {
-  const [orgName, setOrgName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [orgData, setOrgData] = useState({
+    name: "",
+    slug: "",
+    description: "",
+    plan: OrganizationPlan.FREE as OrganizationPlan,
+  });
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -25,16 +42,23 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCreateOrganization = async () => {
-    if (!orgName.trim()) return;
+    if (!orgData.name.trim() || !orgData.slug.trim()) return;
 
     setLoading(true);
 
     try {
-      console.log({ orgName });
+      const response = await createOrganization({...orgData, created_by: "user"});
       setSnackbar({
         open: true,
-        message: "Create organization successful.",
+        message: "Organization created successfully.",
         severity: "success",
+      });
+      setModalOpen(false);
+      setOrgData({
+        name: "",
+        slug: "",
+        description: "",
+        plan: OrganizationPlan.FREE,
       });
     } catch (error) {
       setSnackbar({
@@ -69,6 +93,16 @@ const Dashboard: React.FC = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setOrgData({
+      name: "",
+      slug: "",
+      description: "",
+      plan: OrganizationPlan.FREE,
+    });
+  };
+
   return (
     <Box
       sx={{
@@ -101,29 +135,71 @@ const Dashboard: React.FC = () => {
       <Card sx={{ width: "100%", maxWidth: 600 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            Create Organization
+            Organizations
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Create your organization
-          </Typography>
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <TextField
-              label="Organization Name"
-              value={orgName}
-              onChange={(e) => setOrgName(e.target.value)}
-              fullWidth
-              disabled={loading}
-            />
-            <MIButton
-              loading={loading}
-              onClick={handleCreateOrganization}
-              disabled={!orgName.trim()}
-            >
-              Create
-            </MIButton>
-          </Box>
+          <MIButton
+            variant="contained"
+            onClick={() => setModalOpen(true)}
+            disabled={loading}
+          >
+            +
+          </MIButton>
         </CardContent>
       </Card>
+
+      <Dialog open={modalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
+        <DialogTitle>Create Organization</DialogTitle>
+        <DialogContent dividers>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+            <MITextField
+              label="Organization Name"
+              value={orgData.name}
+              onChange={(e) => setOrgData({ ...orgData, name: e.target.value })}
+              fullWidth
+              required
+            />
+            <MITextField
+              label="Slug"
+              value={orgData.slug}
+              onChange={(e) => setOrgData({ ...orgData, slug: e.target.value })}
+              fullWidth
+              required
+              helperText="Unique identifier for your organization"
+            />
+            <MITextField
+              label="Description"
+              value={orgData.description}
+              onChange={(e) => setOrgData({ ...orgData, description: e.target.value })}
+              fullWidth
+              multiline
+              rows={3}
+            />
+            <FormControl fullWidth>
+              <InputLabel>Plan</InputLabel>
+              <Select
+                value={orgData.plan}
+                label="Plan"
+                onChange={(e) => setOrgData({ ...orgData, plan: e.target.value as OrganizationPlan })}
+              >
+                <MenuItem value={OrganizationPlan.FREE}>Free</MenuItem>
+                <MenuItem value={OrganizationPlan.BASIC}>Basic</MenuItem>
+                <MenuItem value={OrganizationPlan.PRO}>Pro</MenuItem>
+                <MenuItem value={OrganizationPlan.ENTERPRISE}>Enterprise</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={handleCloseModal}>Cancel</Button>
+          <Button 
+            onClick={handleCreateOrganization} 
+            variant="contained"
+            disabled={!orgData.name.trim() || !orgData.slug.trim() || loading}
+          >
+            {loading ? "Creating..." : "Create"}
+          </Button>
+        </DialogActions>
+      </Dialog>
       <MISnackbar {...snackbar} handleCloseSnackbar={handleCloseSnackbar} />
     </Box>
   );
