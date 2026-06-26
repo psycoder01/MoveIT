@@ -15,5 +15,5 @@ export interface LoginResponse {}
 export interface SignUpResponse {}
 
 export interface SessionResponse {
-  data: User
+  data: User;
 }
