@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/only-throw-error */
 import { ConfigService } from "@nestjs/config";
-import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException,
+} from "@nestjs/common";
 
 import { HttpService } from "src/services/http/http.service";
 import { EnvVariables } from "src/configs/env/env.types";
@@ -69,10 +74,15 @@ export class KeycloakService {
     const locationHeader = response.headers.get("location");
 
     if (!locationHeader)
-      throw new Error("Keycloak did not return Location header");
+      throw new InternalServerErrorException(
+        "Keycloak did not return Location header.",
+      );
 
     const userId = locationHeader.split("/").pop();
-    if (!userId) throw new Error("No sub id in the location header");
+    if (!userId)
+      throw new InternalServerErrorException(
+        "No sub id in the location header.",
+      );
 
     return userId;
   }
@@ -81,26 +91,29 @@ export class KeycloakService {
     username: string,
     password: string,
   ): Promise<KeycloakTokenResponse> {
-    const tokenUrl = `${this.baseUrl}/realms/${this.realm}/protocol/openid-connect/token`;
-    const body = new URLSearchParams({
-      grant_type: KeycloakGrantTypes.PASSWORD,
-      client_id: this.clientId,
-      client_secret: this.clientSecret,
-      username,
-      password,
-    });
+    try {
+      const tokenUrl = `${this.baseUrl}/realms/${this.realm}/protocol/openid-connect/token`;
+      const body = new URLSearchParams({
+        grant_type: KeycloakGrantTypes.PASSWORD,
+        client_id: this.clientId,
+        client_secret: this.clientSecret,
+        username,
+        password,
+      });
 
-    const response = await this.httpService.post<
-      KeycloakTokenResponse,
-      BodyInit
-    >(tokenUrl, body, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
+      const response = await this.httpService.post<
+        KeycloakTokenResponse,
+        BodyInit
+      >(tokenUrl, body, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
 
-    this.logger.log(`User logged in: ${username}`);
-    return response;
+      return response;
+    } catch (e) {
+      throw new UnauthorizedException("Invalid user credentials.");
+    }
   }
 
   async logout(refreshToken: string): Promise<void> {
@@ -117,7 +130,7 @@ export class KeycloakService {
       },
     });
 
-    this.logger.log("User logged out");
+    return;
   }
 
   async refreshToken(refreshToken: string): Promise<{

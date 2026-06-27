@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Post,
   Req,
   Res,
@@ -21,10 +24,12 @@ export class AuthController {
 
   @Post("sign-up")
   async signUp(@Body() signUpDto: SignUpDto) {
-    return this.authService.signUp(signUpDto);
+    const user = await this.authService.signUp(signUpDto);
+    return { message: "Signed up successfully.", data: user };
   }
 
   @Post("sign-in")
+  @HttpCode(HttpStatus.OK)
   async signIn(
     @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) res: e.Response,
@@ -44,10 +49,10 @@ export class AuthController {
       maxAge: 15 * 60 * 1000,
     });
 
-    return { message: "Login successful" };
+    return { message: "Logged In successfully.", data: null };
   }
 
-  @Post("sign-out")
+  @Delete("sign-out")
   async signout(
     @Req() req: e.Request,
     @Res({ passthrough: true }) res: e.Response,
@@ -57,7 +62,7 @@ export class AuthController {
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
 
-    return { message: "Logout successful" };
+    return { message: "Logged out successfully.", data: null };
   }
 
   @UseGuards(KeycloakAuthGuard)
@@ -66,9 +71,9 @@ export class AuthController {
     @Req() req: AuthRequest,
     @Res({ passthrough: true }) res: e.Response,
   ) {
-    if (!req.user) throw Error("No user id");
+    if (!req.user) throw Error("No user id.");
     const user = await this.authService.getUser(req.user.userId);
 
-    return { data: user };
+    return { message: "Session details fetched successfully.", data: user };
   }
 }

@@ -29,25 +29,22 @@ export class AuthService {
       credentials: [{ value: password, temporary: false, type: "password" }],
     });
 
-    await this.usersService.create({
+    const user = {
       id: subId,
       email,
       username,
       password_hash: password,
       full_name: `${firstName} ${lastName}`,
-    });
+    };
+    await this.usersService.create(user);
 
-    return { message: "User created successfully" };
+    return user;
   }
 
   async signIn(signInDto: SignInDto) {
     const { username, password } = signInDto;
 
     const token = await this.keycloakService.login(username, password);
-
-    if (!token) {
-      throw new UnauthorizedException("Invalid credentials");
-    }
 
     return {
       access_token: token.access_token,
@@ -62,7 +59,7 @@ export class AuthService {
   async getUser(userId: string) {
     const user = await this.usersService.findById(userId);
 
-    if (!user) throw new NotFoundException("User not found");
+    if (!user) throw new NotFoundException("User not found.");
 
     return user;
   }
