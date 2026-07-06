@@ -4,6 +4,7 @@ import {
   type OrganizationWithMetadata,
   type UpdateOrganization,
 } from "src/types/organization";
+import { type Response } from "src/types/response";
 
 const routes = {
   organization: "organization",
@@ -13,14 +14,14 @@ const routes = {
 
 export const getOrganizationByUserId = async (
   userId: string,
-): Promise<OrganizationWithMetadata[]> => {
+): Promise<Response<OrganizationWithMetadata[]>> => {
   const response = await network.get(routes.organizationByUserId(userId));
   return response.json();
 };
 
 export const createOrganization = async (
   org: Organization,
-): Promise<OrganizationWithMetadata> => {
+): Promise<Response<OrganizationWithMetadata>> => {
   const response = await network.post(routes.organization, {
     json: org,
   });
@@ -30,14 +31,16 @@ export const createOrganization = async (
 export const updateOrganization = async (
   id: string,
   org: UpdateOrganization,
-): Promise<OrganizationWithMetadata> => {
+): Promise<Response<OrganizationWithMetadata>> => {
   const response = await network.patch(routes.organizationById(id), {
     json: org,
   });
   return response.json();
 };
 
-export const deleteOrganization = async (id: string): Promise<void> => {
+export const deleteOrganization = async (
+  id: string,
+): Promise<Response<void>> => {
   const response = await network.delete(routes.organizationById(id));
   return response.json();
 };

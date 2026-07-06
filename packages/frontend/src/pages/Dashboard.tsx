@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
   Box,
@@ -14,6 +14,11 @@ import {
   FormControl,
   InputLabel,
   Select,
+  Chip,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
 } from "@mui/material";
 
 import { signout } from "@/api/auth";
@@ -24,6 +29,7 @@ import { MIButton } from "src/components/base/MIButton";
 import { MISnackbar } from "src/components/base/MISnackbar";
 import MITextField from "@/components/base/MITextField";
 import { useAuthStore } from "@/context/authStore";
+import { useGetOrganizationsByUserId } from "@/hooks/useOrganization";
 
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -40,7 +46,9 @@ const Dashboard: React.FC = () => {
     severity: "info" as "success" | "error" | "info",
   });
   const navigate = useNavigate();
+
   const { user, setUser } = useAuthStore();
+  const { data, isLoading } = useGetOrganizationsByUserId(user?.id || "");
 
   const handleCreateOrganization = async () => {
     if (!orgData.name.trim() || !orgData.slug.trim()) return;
@@ -110,6 +118,39 @@ const Dashboard: React.FC = () => {
     });
   };
 
+  const renderOrgs = () => {
+    if (isLoading) return <>Loading...</>;
+    if (!data) return <>Error...</>;
+    if (data.data.length === 0)
+      return (
+        <Typography variant="body2" color="text.secondary">
+          No organizations found. Create one to get started.
+        </Typography>
+      );
+
+    return (
+      <List>
+        {data.data.map((org) => (
+          <ListItem
+            key={org.id}
+            divider
+            sx={{ cursor: "pointer" }}
+            onClick={() => navigate(`/organization/${org.id}`)}
+          >
+            <ListItemText primary={org.name} secondary={`Slug: ${org.slug}`} />
+            <ListItemSecondaryAction>
+              <Chip
+                label={org.plan}
+                color={org.is_active ? "success" : "default"}
+                size="small"
+              />
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))}
+      </List>
+    );
+  };
+
   return (
     <Box
       sx={{
@@ -151,6 +192,7 @@ const Dashboard: React.FC = () => {
           >
             +
           </MIButton>
+          {renderOrgs()}
         </CardContent>
       </Card>
 
