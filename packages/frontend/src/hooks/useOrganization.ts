@@ -5,11 +5,7 @@ import {
   updateOrganization,
   deleteOrganization,
 } from "src/api/organization";
-import type {
-  Organization,
-  OrganizationWithMetadata,
-  UpdateOrganization,
-} from "src/types/organization";
+import type { Organization, UpdateOrganization } from "src/types/organization";
 
 export const organizationKeys = {
   all: ["organizations"] as const,

@@ -22,14 +22,16 @@ import {
 } from "@mui/material";
 
 import { signout } from "@/api/auth";
-import { createOrganization } from "@/api/organization";
 import { OrganizationPlan } from "@/types/organization";
 
 import { MIButton } from "src/components/base/MIButton";
 import { MISnackbar } from "src/components/base/MISnackbar";
 import MITextField from "@/components/base/MITextField";
 import { useAuthStore } from "@/context/authStore";
-import { useGetOrganizationsByUserId } from "@/hooks/useOrganization";
+import {
+  useCreateOrganization,
+  useGetOrganizationsByUserId,
+} from "@/hooks/useOrganization";
 
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -49,6 +51,7 @@ const Dashboard: React.FC = () => {
 
   const { user, setUser } = useAuthStore();
   const { data, isLoading } = useGetOrganizationsByUserId(user?.id || "");
+  const { mutateAsync: createOrganization } = useCreateOrganization();
 
   const handleCreateOrganization = async () => {
     if (!orgData.name.trim() || !orgData.slug.trim()) return;
