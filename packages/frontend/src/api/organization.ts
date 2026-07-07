@@ -19,6 +19,13 @@ export const getOrganizationByUserId = async (
   return response.json();
 };
 
+export const getOrganizationById = async (
+  id: string,
+): Promise<Response<OrganizationWithMetadata>> => {
+  const response = await network.get(routes.organizationById(id));
+  return response.json();
+};
+
 export const createOrganization = async (
   org: Organization,
 ): Promise<Response<OrganizationWithMetadata>> => {

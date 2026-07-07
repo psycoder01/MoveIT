@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getOrganizationByUserId,
+  getOrganizationById,
   createOrganization,
   updateOrganization,
   deleteOrganization,
@@ -19,6 +20,14 @@ export const useGetOrganizationsByUserId = (userId: string) => {
     queryKey: organizationKeys.byUserId(userId),
     queryFn: () => getOrganizationByUserId(userId),
     enabled: !!userId,
+  });
+};
+
+export const useGetOrganizationById = (id: string) => {
+  return useQuery({
+    queryKey: organizationKeys.byId(id),
+    queryFn: () => getOrganizationById(id),
+    enabled: !!id,
   });
 };
 
