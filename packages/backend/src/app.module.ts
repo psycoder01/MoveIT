@@ -9,6 +9,8 @@ import { UsersModule } from "src/users/users.module";
 import { OrganizationsModule } from "src/organizations/organizations.module";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { AllExceptionsFilter } from "src/interceptors/errorResponse";
+import { InvitationsModule } from "./invitations/invitations.module";
+import { NotificationsModule } from "./notifications/notifications.module";
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { AllExceptionsFilter } from "src/interceptors/errorResponse";
     AuthModule,
     OrganizationsModule,
     UsersModule,
+    InvitationsModule,
+    NotificationsModule,
   ],
   providers: [
     {

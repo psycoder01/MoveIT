@@ -22,8 +22,8 @@ import { EnvVariables } from "src/configs/env/env.types";
           username: db.username,
           password: db.password,
           database: db.database,
-          synchronize: db.synchronize === "true",
           autoLoadEntities: true,
+          synchronize: false,
         };
       },
     }),

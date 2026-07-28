@@ -1,5 +1,6 @@
 import cookieParser from "cookie-parser";
 import { NestFactory } from "@nestjs/core";
+import { Transport } from "@nestjs/microservices";
 import { VersioningType, ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
@@ -31,6 +32,19 @@ async function bootstrap() {
     }),
   );
 
+  app.connectMicroservice({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        clientId: "moveit",
+        brokers: ["localhost:9092"],
+      },
+      consumer: {
+        groupId: "moveit-group",
+      },
+    },
+  });
+
   const config = new DocumentBuilder()
     .setTitle("MoveIT APIs")
     .setDescription("API for MoveIT")
@@ -40,6 +54,7 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, documentFactory);
 
+  await app.startAllMicroservices();
   await app.listen(5000);
 }
 bootstrap();

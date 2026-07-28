@@ -4,7 +4,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  RelationId,
 } from "typeorm";
+import { User } from "../../users/entities/user.entity";
 
 @Entity("organizations")
 export class Organization {
@@ -33,8 +37,14 @@ export class Organization {
   @Column({ default: true })
   is_active: boolean;
 
-  @Column("uuid")
+  @Column({ type: "uuid" })
   created_by: string;
+
+  @ManyToOne(() => User, {
+    createForeignKeyConstraints: true,
+  })
+  @JoinColumn({ name: "created_by" })
+  createdBy: User;
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;
