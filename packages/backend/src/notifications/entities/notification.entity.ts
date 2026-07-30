@@ -4,7 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
+import { User } from "../../users/entities/user.entity";
 
 @Entity("notifications")
 export class Notification {
@@ -13,6 +16,12 @@ export class Notification {
 
   @Column("uuid")
   user_id: string;
+
+  @ManyToOne(() => User, {
+    createForeignKeyConstraints: true,
+  })
+  @JoinColumn({ name: "user_id" })
+  userId: User;
 
   @Column("uuid")
   reference_id: string;

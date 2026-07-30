@@ -4,7 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
+import { User } from "../../users/entities/user.entity";
 
 @Entity("invitations")
 export class Invitation {
@@ -24,8 +27,20 @@ export class Invitation {
   @Column("uuid")
   user_id: string;
 
+  @ManyToOne(() => User, {
+    createForeignKeyConstraints: true,
+  })
+  @JoinColumn({ name: "user_id" })
+  userId: User;
+
   @Column("uuid")
   created_by: string;
+
+  @ManyToOne(() => User, {
+    createForeignKeyConstraints: true,
+  })
+  @JoinColumn({ name: "created_by" })
+  createdBy: User;
 
   @CreateDateColumn({ name: "created_at" })
   created_at: Date;
