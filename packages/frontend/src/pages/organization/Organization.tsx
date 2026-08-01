@@ -19,6 +19,9 @@ import { MIButton } from "src/components/base/MIButton";
 import { MISnackbar } from "src/components/base/MISnackbar";
 import MITextField from "@/components/base/MITextField";
 import { useGetOrganizationById } from "@/hooks/useOrganization";
+import { useInviteUser } from "@/hooks/useInvitations";
+import { getUserByEmail } from "@/api/users";
+import { useAuthStore } from "@/context/authStore";
 
 const INITIAL_BOARD_DATA = {
   id: "",
@@ -28,9 +31,13 @@ const INITIAL_BOARD_DATA = {
 
 const Organization: React.FC = () => {
   const params = useParams();
+  const { user: currentUser } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [boardData, setBoardData] = useState(INITIAL_BOARD_DATA);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteLoading, setInviteLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -41,6 +48,7 @@ const Organization: React.FC = () => {
   const { data: organization, isLoading } = useGetOrganizationById(
     params.organizationId || "",
   );
+  const { mutateAsync: inviteUserMutate } = useInviteUser();
   const boards = [] as (typeof INITIAL_BOARD_DATA)[];
 
   const handleCreateBoard = async () => {
@@ -74,6 +82,45 @@ const Organization: React.FC = () => {
   const handleCloseModal = () => {
     setModalOpen(false);
     setBoardData(INITIAL_BOARD_DATA);
+  };
+
+  const handleCloseInviteModal = () => {
+    setInviteModalOpen(false);
+    setInviteEmail("");
+  };
+
+  const handleInviteUser = async () => {
+    const trimmedEmail = inviteEmail.trim();
+    if (!trimmedEmail || !organization?.data?.id) return;
+
+    setInviteLoading(true);
+
+    try {
+      const userRes = await getUserByEmail(trimmedEmail);
+
+      if (!userRes.data?.id) throw new Error("User not found.");
+
+      await inviteUserMutate({
+        organization_id: organization.data.id,
+        user_id: userRes.data.id,
+      });
+
+      setSnackbar({
+        open: true,
+        message: "User invited successfully.",
+        severity: "success",
+      });
+      setInviteModalOpen(false);
+      setInviteEmail("");
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "Failed to invite user.",
+        severity: "error",
+      });
+    } finally {
+      setInviteLoading(false);
+    }
   };
 
   const renderBoards = () => {
@@ -121,9 +168,27 @@ const Organization: React.FC = () => {
     >
       <Card sx={{ width: "100%", maxWidth: 600 }}>
         <CardContent>
-          <Typography variant="h5" gutterBottom>
-            {organization.data.name}
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h5" gutterBottom>
+              {organization.data.name}
+            </Typography>
+            {currentUser?.id === organization.data.created_by && (
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => setInviteModalOpen(true)}
+                disabled={inviteLoading}
+              >
+                Invite User
+              </Button>
+            )}
+          </Box>
           <Typography variant="h6" gutterBottom>
             Boards
           </Typography>
@@ -178,6 +243,43 @@ const Organization: React.FC = () => {
             disabled={!boardData.name.trim() || loading}
           >
             {loading ? "Creating..." : "Create"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={inviteModalOpen}
+        onClose={handleCloseInviteModal}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Invite User</DialogTitle>
+        <DialogContent dividers>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+            <MITextField
+              label="User Email"
+              value={inviteEmail}
+              onChange={(e) => setInviteEmail(e.target.value)}
+              fullWidth
+              required
+              helperText="Enter the email of the user."
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="outlined"
+            onClick={handleCloseInviteModal}
+            disabled={inviteLoading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleInviteUser}
+            variant="contained"
+            disabled={!inviteEmail.trim() || inviteLoading}
+          >
+            {inviteLoading ? "Inviting..." : "Invite"}
           </Button>
         </DialogActions>
       </Dialog>
