@@ -13,9 +13,13 @@ export class NotificationsController {
     return this.notificationsService.create({ ...payload, type: "invitation" });
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.notificationsService.findOne(+id);
+  @Get("/user/:userId")
+  async findByUserId(@Param("userId") userId: string) {
+    const notifications = await this.notificationsService.findByUserId(userId);
+    return {
+      message: "Notifications fetched successfully.",
+      data: notifications,
+    };
   }
 
   @Delete(":id")

@@ -21,7 +21,6 @@ import {
   ListItemSecondaryAction,
 } from "@mui/material";
 
-import { signout } from "@/api/auth";
 import { OrganizationPlan } from "@/types/organization";
 
 import { MIButton } from "src/components/base/MIButton";
@@ -48,8 +47,7 @@ const Dashboard: React.FC = () => {
     severity: "info" as "success" | "error" | "info",
   });
   const navigate = useNavigate();
-
-  const { user, setUser } = useAuthStore();
+  const { user } = useAuthStore();
   const { data, isLoading } = useGetOrganizationsByUserId(user?.id || "");
   const { mutateAsync: createOrganization } = useCreateOrganization();
 
@@ -85,25 +83,6 @@ const Dashboard: React.FC = () => {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signout();
-      setUser(null);
-      setSnackbar({
-        open: true,
-        message: "Sign out successful.",
-        severity: "success",
-      });
-      navigate("/auth");
-    } catch (error) {
-      setSnackbar({
-        open: true,
-        message: "Error occurred.",
-        severity: "error",
-      });
     }
   };
 
@@ -169,18 +148,12 @@ const Dashboard: React.FC = () => {
         sx={{
           width: "100%",
           maxWidth: 600,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
           mb: 4,
         }}
       >
         <Typography variant="h4" component="h1">
           Dashboard
         </Typography>
-        <Button variant="outlined" onClick={handleLogout}>
-          Logout
-        </Button>
       </Box>
 
       <Card sx={{ width: "100%", maxWidth: 600 }}>

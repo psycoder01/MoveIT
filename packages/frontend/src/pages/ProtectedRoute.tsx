@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
 import { Navigate, Outlet } from "react-router";
 
 import { session } from "@/api/auth";
 import { useAuthStore } from "@/context/authStore";
+import ProfileTopBar from "@/components/derived/ProfileTopBar";
 
 export default function ProtectedRoute() {
   const [loading, setLoading] = useState(true);
@@ -31,5 +33,18 @@ export default function ProtectedRoute() {
     return <Navigate to="/auth" replace />;
   }
 
-  return <Outlet />;
+  return (
+    <>
+      <ProfileTopBar />
+      <Box
+        component="main"
+        sx={{
+          pt: 8,
+          pb: { xs: 4, md: 6 },
+        }}
+      >
+        <Outlet />
+      </Box>
+    </>
+  );
 }
