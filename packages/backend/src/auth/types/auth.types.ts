@@ -11,3 +11,11 @@ export interface DecodedUserDetails<T = any> {
 export type AuthRequest = Request & {
   user?: DecodedUserDetails;
 };
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  username: string;
+  password_hash: string,
+  full_name: string;
+}

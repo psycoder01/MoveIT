@@ -16,7 +16,8 @@ import { AuthService } from "src/auth/auth.service";
 import { SignUpDto } from "src/auth/dto/sign-up.dto";
 import { SignInDto } from "src/auth/dto/sign-in.dto";
 import { KeycloakAuthGuard } from "src/auth/guards/keycloak.guard";
-import { type AuthRequest } from "src/auth/types/types";
+import { type AuthRequest } from "src/auth/types/auth.types";
+import { sessionMapper } from "src/auth/mappers/sessionUser.mapper";
 
 @Controller("auth")
 export class AuthController {
@@ -25,7 +26,9 @@ export class AuthController {
   @Post("sign-up")
   async signUp(@Body() signUpDto: SignUpDto) {
     const user = await this.authService.signUp(signUpDto);
-    return { message: "Signed up successfully.", data: user };
+    const data = sessionMapper.toSessionDto(user)
+    
+    return { message: "Signed up successfully.", data };
   }
 
   @Post("sign-in")
@@ -57,7 +60,7 @@ export class AuthController {
     @Req() req: e.Request,
     @Res({ passthrough: true }) res: e.Response,
   ) {
-    this.authService.signout(req.cookies?.refresh_token);
+    await this.authService.signout(req.cookies?.refresh_token);
 
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
@@ -69,11 +72,13 @@ export class AuthController {
   @Get("session")
   async session(
     @Req() req: AuthRequest,
-    @Res({ passthrough: true }) res: e.Response,
+    @Res({ passthrough: true }) _: e.Response,
   ) {
     if (!req.user) throw Error("No user id.");
+    
     const user = await this.authService.getUser(req.user.userId);
+    const data = sessionMapper.toSessionDto(user)
 
-    return { message: "Session details fetched successfully.", data: user };
+    return { message: "Session details fetched successfully.", data };
   }
 }

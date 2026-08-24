@@ -1,8 +1,10 @@
+/* eslint-disable */
+
 import * as jwksRsa from "jwks-rsa";
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { DecodedUserDetails } from "src/auth/types/types";
+import { DecodedUserDetails } from "src/auth/types/auth.types";
 
 @Injectable()
 export class KeycloakStrategy extends PassportStrategy(Strategy, "keycloak") {

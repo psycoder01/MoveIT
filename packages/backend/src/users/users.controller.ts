@@ -1,5 +1,7 @@
 import { Controller, Get, NotFoundException, Query } from "@nestjs/common";
-import { UsersService } from "./users.service";
+
+import { UsersService } from "src/users/users.service";
+import { userMapper } from "src/users/mappers/user.mapper";
 
 @Controller("users")
 export class UsersController {
@@ -13,20 +15,11 @@ export class UsersController {
       throw new NotFoundException("User not found.");
     }
 
+    const data = userMapper.toSearchDto(user)
+
     return {
       message: "User fetched successfully.",
-      data: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        full_name: user.full_name,
-        avatar_url: user.avatar_url,
-        timezone: user.timezone,
-        is_active: user.is_active,
-        last_login_at: user.last_login_at,
-        created_at: user.created_at,
-        updated_at: user.updated_at,
-      },
+      data,
     };
   }
 }

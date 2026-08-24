@@ -2,7 +2,7 @@ import { Req, Controller, Post, Body, Param, UseGuards } from "@nestjs/common";
 import { InvitationsService } from "./invitations.service";
 import { CreateInvitationDto } from "./dto/create-invitation.dto";
 
-import { type AuthRequest } from "src/auth/types/types";
+import { type AuthRequest } from "src/auth/types/auth.types";
 import { KeycloakAuthGuard } from "src/auth/guards/keycloak.guard";
 import { InvitationStatus } from "./types";
 

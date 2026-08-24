@@ -1,11 +1,11 @@
 import {
   Injectable,
-  UnauthorizedException,
   NotFoundException,
 } from "@nestjs/common";
 
 import { SignUpDto } from "src/auth/dto/sign-up.dto";
 import { SignInDto } from "src/auth/dto/sign-in.dto";
+import { AuthUser } from "src/auth/types/auth.types";
 
 import { KeycloakService } from "src/services/keycloak/keycloak.service";
 import { UsersService } from "src/users/users.service";
@@ -29,11 +29,11 @@ export class AuthService {
       credentials: [{ value: password, temporary: false, type: "password" }],
     });
 
-    const user = {
+    const user: AuthUser = {
       id: subId,
       email,
       username,
-      password_hash: password,
+       password_hash: password,
       full_name: `${firstName} ${lastName}`,
     };
     await this.usersService.create(user);
