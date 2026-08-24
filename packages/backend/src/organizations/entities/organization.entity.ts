@@ -6,9 +6,9 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  RelationId,
 } from "typeorm";
 import { User } from "../../users/entities/user.entity";
+import { OrganizationPlan } from "../organization.types";
 
 @Entity("organizations")
 export class Organization {
@@ -29,7 +29,7 @@ export class Organization {
 
   @Column({
     type: "enum",
-    enum: ["free", "basic", "pro", "enterprise"],
+    enum: OrganizationPlan,
     default: "free",
   })
   plan: string;

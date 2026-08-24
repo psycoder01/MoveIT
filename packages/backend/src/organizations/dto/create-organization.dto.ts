@@ -6,6 +6,8 @@ import {
   IsUUID,
 } from "class-validator";
 
+import { OrganizationPlan } from "../organization.types";
+
 export class CreateOrganizationDto {
   @IsString()
   name: string;
@@ -21,7 +23,7 @@ export class CreateOrganizationDto {
   @IsString()
   logo_url?: string;
 
-  @IsEnum(["free", "basic", "pro", "enterprise"])
+  @IsEnum(OrganizationPlan)
   plan: string;
 
   @IsOptional()

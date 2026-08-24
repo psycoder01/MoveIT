@@ -1,5 +1,7 @@
 import { IsBoolean, IsEnum, IsOptional, IsString } from "class-validator";
 
+import { OrganizationPlan } from "../organization.types";
+
 export class UpdateOrganizationDto {
   @IsOptional()
   @IsString()
@@ -14,8 +16,8 @@ export class UpdateOrganizationDto {
   logo_url?: string;
 
   @IsOptional()
-  @IsEnum(["free", "basic", "pro", "enterprise"])
-  plan?: "free" | "basic" | "pro" | "enterprise";
+  @IsEnum(OrganizationPlan)
+  plan?: OrganizationPlan;
 
   @IsOptional()
   @IsBoolean()
