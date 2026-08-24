@@ -8,6 +8,7 @@ import {
   JoinColumn,
 } from "typeorm";
 import { User } from "../../users/entities/user.entity";
+import { InvitationStatus } from "../types";
 
 @Entity("invitations")
 export class Invitation {
@@ -16,7 +17,7 @@ export class Invitation {
 
   @Column({
     type: "enum",
-    enum: ["pending", "accepted", "declined", "expired"],
+    enum: InvitationStatus,
     default: "pending",
   })
   status: string;

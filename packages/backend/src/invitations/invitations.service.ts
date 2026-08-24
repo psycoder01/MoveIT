@@ -8,6 +8,7 @@ import { Invitation } from "src/invitations/entities/invitation.entity";
 import { OrganizationsService } from "src/organizations/organizations.service";
 import { UsersService } from "src/users/users.service";
 import { invitationEvents } from "src/configs/kafka/kafka.events";
+import { UpdateInvitation } from "./types";
 
 @Injectable()
 export class InvitationsService {
@@ -52,11 +53,19 @@ export class InvitationsService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} invitation`;
-  }
+  async updateInvitation(update: UpdateInvitation, userId: string) {
+    const invitation = await this.invitationRepository.findOneBy({
+      id: update.invitationId,
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} invitation`;
+    if (!invitation) throw Error("Invitation not found.");
+    if (invitation.user_id !== userId) throw Error("Invalid invitation.");
+
+    await this.invitationRepository.update(
+      { id: update.invitationId },
+      {
+        status: update.status,
+      },
+    );
   }
 }

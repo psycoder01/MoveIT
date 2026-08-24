@@ -157,9 +157,9 @@ export const ProfileTopBar: React.FC = () => {
                   ...(avatarUrl
                     ? {}
                     : {
-                        backgroundColor: BRAND_COLOR,
-                        color: "#fff",
-                      }),
+                      backgroundColor: BRAND_COLOR,
+                      color: "#fff",
+                    }),
                 }}
               >
                 {!avatarUrl && (
@@ -212,6 +212,12 @@ export const ProfileTopBar: React.FC = () => {
             {notifications?.data.map((item) => (
               <MenuItem
                 key={item.id}
+                onClick={() => {
+                  closeMenu();
+                  navigate(`/invitations/${item.reference_id}`, {
+                    state: { organization: item.organization, organizationId: item.id, userId: user?.id },
+                  });
+                }}
                 sx={{
                   alignItems: "flex-start",
                   flexWrap: "wrap",

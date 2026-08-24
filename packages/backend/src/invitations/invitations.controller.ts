@@ -1,18 +1,10 @@
-import {
-  Req,
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  UseGuards,
-} from "@nestjs/common";
+import { Req, Controller, Post, Body, Param, UseGuards } from "@nestjs/common";
 import { InvitationsService } from "./invitations.service";
 import { CreateInvitationDto } from "./dto/create-invitation.dto";
 
 import { type AuthRequest } from "src/auth/types/types";
 import { KeycloakAuthGuard } from "src/auth/guards/keycloak.guard";
+import { InvitationStatus } from "./types";
 
 @Controller("invitations")
 export class InvitationsController {
@@ -29,13 +21,22 @@ export class InvitationsController {
     return this.invitationsService.create(createInvitationDto, req.user.userId);
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.invitationsService.findOne(+id);
-  }
+  @Post("/:invitationId/:status")
+  @UseGuards(KeycloakAuthGuard)
+  async accept(
+    @Req() req: AuthRequest,
+    @Param("invitationId") invitationId: string,
+    @Param("status") status: InvitationStatus,
+  ) {
+    if (!req.user) throw Error("Invalid bearer token.");
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.invitationsService.remove(+id);
+    await this.invitationsService.updateInvitation(
+      { invitationId, status },
+      req.user?.userId,
+    );
+    return {
+      message: "Invitation updated successfully.",
+      data: null,
+    };
   }
 }
