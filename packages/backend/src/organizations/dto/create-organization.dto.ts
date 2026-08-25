@@ -6,7 +6,7 @@ import {
   IsUUID,
 } from "class-validator";
 
-import { OrganizationPlan } from "../organizations.types";
+import { OrganizationPlan } from "src/organizations/types/organizations.types";
 
 export class CreateOrganizationDto {
   @IsString()

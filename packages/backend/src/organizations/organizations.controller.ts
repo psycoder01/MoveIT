@@ -7,9 +7,10 @@ import {
   Patch,
   Delete,
 } from "@nestjs/common";
-import { OrganizationsService } from "./organizations.service";
-import { CreateOrganizationDto } from "./dto/create-organization.dto";
-import { UpdateOrganizationDto } from "./dto/update-organization.dto";
+import { OrganizationsService } from "src/organizations/organizations.service";
+import { CreateOrganizationDto } from "src/organizations/dto/create-organization.dto";
+import { UpdateOrganizationDto } from "src/organizations/dto/update-organization.dto";
+import { organizationMapper } from "src/organizations/mapper/organization.mapper";
 
 @Controller("organization")
 export class OrganizationsController {
@@ -18,8 +19,9 @@ export class OrganizationsController {
   @Post()
   async create(@Body() createOrganizationDto: CreateOrganizationDto) {
     const org = await this.organizationsService.create(createOrganizationDto);
+    const data = organizationMapper.toDto(org);
 
-    return { message: "Organization created successfully.", data: org };
+    return { message: "Organization created successfully.", data };
   }
 
   @Get(":id")
@@ -32,8 +34,9 @@ export class OrganizationsController {
   @Get("/user/:userId")
   async findByUserId(@Param("userId") userId: string) {
     const orgs = await this.organizationsService.findByUserId(userId);
+    const data = orgs.map((org) => organizationMapper.toDto(org));
 
-    return { message: "Organizations fetched successfully.", data: orgs };
+    return { message: "Organizations fetched successfully.", data };
   }
 
   @Patch(":id")
@@ -45,14 +48,16 @@ export class OrganizationsController {
       id,
       updateOrganizationDto,
     );
+    const data = organizationMapper.toDto(org);
 
-    return { message: "Organization updated successfully.", data: org };
+    return { message: "Organization updated successfully.", data };
   }
 
   @Delete(":id")
   async remove(@Param("id") id: string) {
     const org = await this.organizationsService.remove(id);
+    const data = organizationMapper.toDto(org);
 
-    return { message: "Organization deleted successfully.", data: org };
+    return { message: "Organization deleted successfully.", data };
   }
 }
