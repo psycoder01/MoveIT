@@ -30,7 +30,7 @@ export class Notification {
   @Column({
     type: "enum",
     enum: NotificationTypes,
-    default: "default",
+    default: NotificationTypes.default,
   })
   type: string;
 

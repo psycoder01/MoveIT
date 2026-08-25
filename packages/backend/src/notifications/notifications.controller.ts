@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Delete } from "@nestjs/common";
+import { Controller, Get, Param } from "@nestjs/common";
 import { EventPattern, Payload } from "@nestjs/microservices";
 
-import { NotificationsService } from "./notifications.service";
+import { NotificationsService } from "src/notifications/notifications.service";
 import { Invitation } from "src/invitations/entities/invitation.entity";
+import { notificationMapper } from "./mappers/notification.mapper";
 
 @Controller("notifications")
 export class NotificationsController {
@@ -16,14 +17,13 @@ export class NotificationsController {
   @Get("/user/:userId")
   async findByUserId(@Param("userId") userId: string) {
     const notifications = await this.notificationsService.findByUserId(userId);
+    const data = notifications.map((notification) =>
+      notificationMapper.toDto(notification),
+    );
+
     return {
       message: "Notifications fetched successfully.",
-      data: notifications,
+      data,
     };
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.notificationsService.remove(+id);
   }
 }

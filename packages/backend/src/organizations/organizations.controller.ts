@@ -10,7 +10,7 @@ import {
 import { OrganizationsService } from "src/organizations/organizations.service";
 import { CreateOrganizationDto } from "src/organizations/dto/create-organization.dto";
 import { UpdateOrganizationDto } from "src/organizations/dto/update-organization.dto";
-import { organizationMapper } from "src/organizations/mapper/organization.mapper";
+import { organizationMapper } from "src/organizations/mappers/organization.mapper";
 
 @Controller("organization")
 export class OrganizationsController {

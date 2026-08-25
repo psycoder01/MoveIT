@@ -9,5 +9,7 @@ export const organizationMapper = {
     description: organization.description,
     logoUrl: organization.logo_url,
     plan: organization.plan,
+    createdBy: organization.created_by,
+    createdAt: organization.created_at.toString(),
   }),
 };

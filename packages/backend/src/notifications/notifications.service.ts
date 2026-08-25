@@ -4,7 +4,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 import { Invitation } from "src/invitations/entities/invitation.entity";
-import { Notification } from "./entities/notification.entity";
+import { Notification } from "src/notifications/entities/notification.entity";
+import { NotificationWithOrganization } from "src/notifications/types/notification.types";
 
 interface DefaultEvent {
   id: string;
@@ -47,7 +48,7 @@ export class NotificationsService {
       .addSelect("org.name", "organization")
       .where("notifications.user_id = :userId", { userId })
       .getRawMany();
-
+    /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
     const data = result.map((r) => ({
       id: r.notifications_id,
       user_id: r.notifications_user_id,
@@ -58,7 +59,8 @@ export class NotificationsService {
       is_read: r.notifications_is_read,
       created_at: r.notifications_created_at,
       updated_at: r.notifications_updated_at,
-    }));
+    })) as NotificationWithOrganization[];
+    /* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 
     return data;
   }

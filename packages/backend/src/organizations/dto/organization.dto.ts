@@ -5,4 +5,6 @@ export class OrganizationDtO {
   readonly description: string;
   readonly logoUrl: string;
   readonly plan: string;
+  readonly createdBy: string;
+  readonly createdAt: string;
 }
