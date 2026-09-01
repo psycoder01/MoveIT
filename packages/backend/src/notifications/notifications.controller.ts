@@ -5,6 +5,7 @@ import { NotificationsService } from "src/notifications/notifications.service";
 import { Invitation } from "src/invitations/entities/invitation.entity";
 import { notificationMapper } from "./mappers/notification.mapper";
 import { KeycloakAuthGuard } from "src/auth/guards/keycloak.guard";
+import { NotificationType } from "src/notifications/types/notification.types";
 
 @Controller("notifications")
 export class NotificationsController {
@@ -12,7 +13,10 @@ export class NotificationsController {
 
   @EventPattern("invitation.created")
   create(@Payload() payload: Invitation) {
-    return this.notificationsService.create({ ...payload, type: "invitation" });
+    return this.notificationsService.create({
+      ...payload,
+      type: NotificationType.ORG_INVITATION,
+    });
   }
 
   @UseGuards(KeycloakAuthGuard)

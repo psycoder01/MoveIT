@@ -5,7 +5,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 import { Invitation } from "src/invitations/entities/invitation.entity";
 import { Notification } from "src/notifications/entities/notification.entity";
-import { NotificationWithOrganization } from "src/notifications/types/notification.types";
+import {
+  NotificationType,
+  NotificationWithOrganization,
+} from "src/notifications/types/notification.types";
 
 interface DefaultEvent {
   id: string;
@@ -14,7 +17,7 @@ interface DefaultEvent {
 }
 
 interface CreatedEventPayload extends Invitation, DefaultEvent {
-  type: "default" | "invitation";
+  type: NotificationType;
 }
 
 @Injectable()
@@ -25,15 +28,15 @@ export class NotificationsService {
   ) {}
 
   async create(payload: CreatedEventPayload) {
-    const { id: eventId, user_id, type } = payload;
+    const { id: reference_id, user_id, type } = payload;
 
     const notificationPayload = {
       id: uuidv4(),
       user_id,
-      reference_id: eventId,
+      reference_id,
       type: type,
       is_read: false,
-      title: type === "invitation" ? "Invitation" : "Notification",
+      title: "Notification",
       message: "",
     };
 
