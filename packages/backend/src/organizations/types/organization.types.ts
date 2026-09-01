@@ -4,3 +4,8 @@ export enum OrganizationPlan {
   pro = "pro",
   enterprise = "enterprise",
 }
+
+export enum OrganizationMemberRole {
+  admin = "admin",
+  member = "member",
+}

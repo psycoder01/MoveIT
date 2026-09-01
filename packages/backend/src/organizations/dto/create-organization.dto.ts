@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsBoolean,
-  IsUUID,
-} from "class-validator";
+import { IsString, IsOptional, IsEnum, IsBoolean } from "class-validator";
 
 import { OrganizationPlan } from "src/organizations/types/organization.types";
 
@@ -29,7 +23,4 @@ export class CreateOrganizationDto {
   @IsOptional()
   @IsBoolean()
   is_active?: boolean;
-
-  @IsUUID()
-  created_by: string;
 }

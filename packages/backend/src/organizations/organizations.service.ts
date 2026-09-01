@@ -3,6 +3,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
 import { Organization } from "src/organizations/entities/organization.entity";
+import { OrganizationMember } from "src/organizations/entities/organization-members.entity";
+import { OrganizationMemberRole } from "src/organizations/types/organization.types";
 import { CreateOrganizationDto } from "src/organizations/dto/create-organization.dto";
 import { UpdateOrganizationDto } from "src/organizations/dto/update-organization.dto";
 
@@ -11,12 +13,15 @@ export class OrganizationsService {
   constructor(
     @InjectRepository(Organization)
     private organizationsRepository: Repository<Organization>,
+    @InjectRepository(OrganizationMember)
+    private organizationMembersRepository: Repository<OrganizationMember>,
   ) {}
 
-  create(createOrganizationDto: CreateOrganizationDto) {
-    const organization = this.organizationsRepository.create(
-      createOrganizationDto,
-    );
+  create(createOrganizationDto: CreateOrganizationDto, userId: string) {
+    const organization = this.organizationsRepository.create({
+      ...createOrganizationDto,
+      created_by: userId,
+    });
     return this.organizationsRepository.save(organization);
   }
 
@@ -60,5 +65,38 @@ export class OrganizationsService {
   async remove(id: string) {
     const organization = await this.findOne(id);
     return this.organizationsRepository.remove(organization);
+  }
+
+  async addMember(
+    organizationId: string,
+    userId: string,
+    role: OrganizationMemberRole = OrganizationMemberRole.member,
+  ) {
+    const organizationMember = this.organizationMembersRepository.create({
+      organization_id: organizationId,
+      user_id: userId,
+      role,
+    });
+    return this.organizationMembersRepository.save(organizationMember);
+  }
+
+  async getMembers(organizationId: string) {
+    return this.organizationMembersRepository.find({
+      where: { organization_id: organizationId },
+      relations: { user: true },
+    });
+  }
+
+  async removeMember(organizationId: string, userId: string) {
+    const organizationMember = await this.organizationMembersRepository.findOne(
+      {
+        where: { organization_id: organizationId, user_id: userId },
+        relations: { user: true, organization: true },
+      },
+    );
+    if (!organizationMember) {
+      throw new NotFoundException(`User not found in organization`);
+    }
+    return this.organizationMembersRepository.remove(organizationMember);
   }
 }

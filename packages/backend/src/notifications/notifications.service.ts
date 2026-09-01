@@ -56,6 +56,7 @@ export class NotificationsService {
       id: r.notifications_id,
       user_id: r.notifications_user_id,
       organization: r.organization,
+      reference_id: r.notifications_reference_id,
       title: r.notifications_title,
       message: r.notifications_message,
       type: r.notifications_type,

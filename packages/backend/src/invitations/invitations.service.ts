@@ -8,7 +8,7 @@ import { Invitation } from "src/invitations/entities/invitation.entity";
 import { OrganizationsService } from "src/organizations/organizations.service";
 import { UsersService } from "src/users/users.service";
 import { invitationEvents } from "src/configs/kafka/kafka.events";
-import { UpdateInvitation } from "./types";
+import { InvitationStatus, UpdateInvitation } from "src/invitations/types";
 
 @Injectable()
 export class InvitationsService {
@@ -21,11 +21,14 @@ export class InvitationsService {
     private readonly organizationService: OrganizationsService,
   ) {}
 
-  async create(createInvitationDto: CreateInvitationDto, userId: string) {
+  async create(createInvitationDto: CreateInvitationDto, createdBy: string) {
+    if (createdBy === createInvitationDto.user_id)
+      throw Error("Cannot invite yourself.");
+
     const organization =
       await this.organizationService.findByOrganizationIdAndCreatedBy(
         createInvitationDto.organization_id,
-        userId,
+        createdBy,
       );
 
     if (!organization) throw Error("Organization or creator does not exist.");
@@ -44,7 +47,7 @@ export class InvitationsService {
 
     const invitation = await this.invitationRepository.save({
       ...createInvitationDto,
-      created_by: userId,
+      created_by: createdBy,
     });
 
     this.kafkaClient.emit(invitationEvents.created, {
@@ -67,5 +70,12 @@ export class InvitationsService {
         status: update.status,
       },
     );
+
+    if (update.status === InvitationStatus.accepted) {
+      await this.organizationService.addMember(
+        invitation.organization_id,
+        invitation.user_id,
+      );
+    }
   }
 }
