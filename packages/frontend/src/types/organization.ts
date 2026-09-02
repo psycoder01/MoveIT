@@ -10,15 +10,14 @@ export interface Organization {
   slug: string;
   description: string;
   plan: OrganizationPlan;
-  created_by: string;
+  createdBy: string;
 }
 
 export interface OrganizationWithMetadata extends Organization {
   id: string;
-  logo_url: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  logoUrl: string;
+  isActive: boolean;
+  createdAt: string;
 }
 
 export interface UpdateOrganization {

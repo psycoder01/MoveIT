@@ -2,13 +2,13 @@ type NotificationType = "default" | "invitation";
 
 export interface NotificationWithMetadata {
   id: string;
-  user_id: string;
+  userId: string;
   organization: string;
-  reference_id: string;
+  referenceId: string;
   type: NotificationType;
   title: string;
   message: string;
-  is_read: boolean;
-  created_at: string;
-  updated_at: string;
+  isRead: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

@@ -99,8 +99,8 @@ export const ProfileTopBar: React.FC = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const displayName = user?.full_name || user?.username || "Account";
-  const avatarUrl = user?.avatar_url || "";
+  const displayName = user?.fullName || user?.username || "Account";
+  const avatarUrl = "";
 
   return (
     <>
@@ -214,14 +214,14 @@ export const ProfileTopBar: React.FC = () => {
                 key={item.id}
                 onClick={() => {
                   closeMenu();
-                  navigate(`/invitations/${item.reference_id}`, {
+                  navigate(`/invitations/${item.referenceId}`, {
                     state: { organization: item.organization, organizationId: item.id, userId: user?.id },
                   });
                 }}
                 sx={{
                   alignItems: "flex-start",
                   flexWrap: "wrap",
-                  ...(item.is_read
+                  ...(item.isRead
                     ? { opacity: 0.6 }
                     : { backgroundColor: "action.hover" }),
                 }}
