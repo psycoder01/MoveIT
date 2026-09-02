@@ -5,6 +5,7 @@ import {
   type UpdateOrganization,
 } from "src/types/organization";
 import { type Response } from "src/types/response";
+import type { OrganizationMember } from "src/types/organization";
 
 const routes = {
   organization: "organization",
@@ -49,5 +50,14 @@ export const deleteOrganization = async (
   id: string,
 ): Promise<Response<void>> => {
   const response = await network.delete(routes.organizationById(id));
+  return response.json();
+};
+
+export const getOrganizationMembers = async (
+  organizationId: string,
+): Promise<Response<OrganizationMember[]>> => {
+  const response = await network.get(
+    `organization/${organizationId}/members`,
+  );
   return response.json();
 };

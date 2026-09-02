@@ -13,7 +13,10 @@ import {
   List,
   ListItem,
   ListItemText,
+  Avatar,
+  IconButton,
 } from "@mui/material";
+import PeopleIcon from "@mui/icons-material/People";
 
 import { MIButton } from "src/components/base/MIButton";
 import { MISnackbar } from "src/components/base/MISnackbar";
@@ -22,6 +25,7 @@ import { useGetOrganizationById } from "@/hooks/useOrganization";
 import { useInviteUser } from "@/hooks/useInvitations";
 import { getUserByEmail } from "@/api/users";
 import { useAuthStore } from "@/context/authStore";
+import { useGetOrganizationMembers } from "@/hooks/useOrganizationMembers";
 
 const INITIAL_BOARD_DATA = {
   id: "",
@@ -35,6 +39,7 @@ const Organization: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [boardData, setBoardData] = useState(INITIAL_BOARD_DATA);
+  const [membersModalOpen, setMembersModalOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteLoading, setInviteLoading] = useState(false);
@@ -49,6 +54,9 @@ const Organization: React.FC = () => {
     params.organizationId || "",
   );
   const { mutateAsync: inviteUserMutate } = useInviteUser();
+  const { data: membersData, isLoading: isMembersLoading } = useGetOrganizationMembers(
+    params.organizationId || "",
+  );
   const boards = [] as (typeof INITIAL_BOARD_DATA)[];
 
   const handleCreateBoard = async () => {
@@ -82,6 +90,10 @@ const Organization: React.FC = () => {
   const handleCloseModal = () => {
     setModalOpen(false);
     setBoardData(INITIAL_BOARD_DATA);
+  };
+
+  const handleCloseMembersModal = () => {
+    setMembersModalOpen(false);
   };
 
   const handleCloseInviteModal = () => {
@@ -178,16 +190,29 @@ const Organization: React.FC = () => {
             <Typography variant="h5" gutterBottom>
               {organization.data.name}
             </Typography>
-            {currentUser?.id === organization.data.created_by && (
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => setInviteModalOpen(true)}
-                disabled={inviteLoading}
+            <Box sx={{ display: "flex", gap: 1 }}>
+              {currentUser?.id === organization.data.createdBy && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => setInviteModalOpen(true)}
+                  disabled={inviteLoading}
+                >
+                  Invite User
+                </Button>
+              )}
+              <IconButton
+                onClick={() => setMembersModalOpen(true)}
+                sx={{
+                  backgroundColor: "#f0f0f0",
+                  "&:hover": {
+                    backgroundColor: "#e0e0e0",
+                  },
+                }}
               >
-                Invite User
-              </Button>
-            )}
+                <PeopleIcon />
+              </IconButton>
+            </Box>
           </Box>
           <Typography variant="h6" gutterBottom>
             Boards
@@ -280,6 +305,44 @@ const Organization: React.FC = () => {
             disabled={!inviteEmail.trim() || inviteLoading}
           >
             {inviteLoading ? "Inviting..." : "Invite"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={membersModalOpen}
+        onClose={handleCloseMembersModal}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Organization Members</DialogTitle>
+        <DialogContent dividers>
+          {isMembersLoading ? (
+            <Typography>Loading members...</Typography>
+          ) : membersData?.data?.length === 0 ? (
+            <Typography>No members found.</Typography>
+          ) : (
+            <List>
+              {membersData?.data?.map((member) => (
+                <ListItem key={member.user.email} divider>
+                  <Avatar
+                    sx={{ mr: 2, bgcolor: "#0079bf" }}
+                    src={member.user.username ? `https://api.dicebear.com/7.x/initials/svg?seed=${member.user.fullName}` : undefined}
+                  >
+                    {member.user.fullName ? member.user.fullName.charAt(0) : member.user.email.charAt(0)}
+                  </Avatar>
+                  <ListItemText
+                    primary={member.user.fullName || member.user.email}
+                    secondary={`Email: ${member.user.email} | Role: ${member.role}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={handleCloseMembersModal}>
+            Close
           </Button>
         </DialogActions>
       </Dialog>

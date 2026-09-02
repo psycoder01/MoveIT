@@ -8,3 +8,14 @@ export class OrganizationDtO {
   readonly createdBy: string;
   readonly createdAt: string;
 }
+
+export class OrganizationMemberDto {
+  readonly user: {
+    username: string;
+    fullName: string;
+    email: string;
+  };
+  readonly role: string;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}

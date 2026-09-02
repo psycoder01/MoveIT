@@ -40,10 +40,12 @@ export class OrganizationsService {
   }
 
   async findByUserId(userId: string) {
-    const organizations = await this.organizationsRepository.find({
-      where: { created_by: userId },
+    const memberOrganizations = await this.organizationMembersRepository.find({
+      where: { user_id: userId },
+      relations: { organization: true },
     });
-    return organizations;
+
+    return memberOrganizations;
   }
 
   async findByOrganizationIdAndCreatedBy(

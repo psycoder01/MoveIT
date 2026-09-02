@@ -16,6 +16,7 @@ import { organizationMapper } from "src/organizations/mappers/organization.mappe
 import { KeycloakAuthGuard } from "src/auth/guards/keycloak.guard";
 import { OrganizationMemberRole } from "src/organizations/types/organization.types";
 import { type AuthRequest } from "src/auth/types/auth.types";
+import { OrganizationMemberDto } from "src/organizations/dto/organization.dto";
 
 @Controller("organization")
 export class OrganizationsController {
@@ -28,38 +29,36 @@ export class OrganizationsController {
     @Req() req: AuthRequest,
   ) {
     if (!req?.user) throw Error("No tokens.");
-    try {
-      const org = await this.organizationsService.create(
-        createOrganizationDto,
-        req.user.userId,
-      );
-      const data = organizationMapper.toDto(org);
 
-      await this.organizationsService.addMember(
-        org.id,
-        req.user.userId,
-        OrganizationMemberRole.admin,
-      );
+    const org = await this.organizationsService.create(
+      createOrganizationDto,
+      req.user.userId,
+    );
+    const data = organizationMapper.toDto(org);
 
-      return { message: "Organization created successfully.", data };
-    } catch (e) {
-      console.log({ e });
-    }
+    await this.organizationsService.addMember(
+      org.id,
+      req.user.userId,
+      OrganizationMemberRole.admin,
+    );
+
+    return { message: "Organization created successfully.", data };
   }
 
   @UseGuards(KeycloakAuthGuard)
   @Get(":id")
   async findOne(@Param("id") id: string) {
     const org = await this.organizationsService.findOne(id);
+    const data = organizationMapper.toDto(org);
 
-    return { message: "Organization fetched successfully.", data: org };
+    return { message: "Organization fetched successfully.", data };
   }
 
   @UseGuards(KeycloakAuthGuard)
   @Get("/user/:userId")
   async findByUserId(@Param("userId") userId: string) {
     const orgs = await this.organizationsService.findByUserId(userId);
-    const data = orgs.map((org) => organizationMapper.toDto(org));
+    const data = orgs.map((org) => organizationMapper.toDto(org.organization));
 
     return { message: "Organizations fetched successfully.", data };
   }
@@ -92,11 +91,15 @@ export class OrganizationsController {
   @Get(":organizationId/members")
   async getMembers(@Param("organizationId") organizationId: string) {
     const members = await this.organizationsService.getMembers(organizationId);
-    const data = members.map((member) => ({
-      userId: member.user_id,
+    const data: OrganizationMemberDto[] = members.map((member) => ({
+      user: {
+        username: member.user.username,
+        email: member.user.email,
+        fullName: member.user.full_name,
+      },
       role: member.role,
-      created_at: member.created_at,
-      updated_at: member.updated_at,
+      createdAt: member.created_at.toString(),
+      updatedAt: member.updated_at.toString(),
     }));
 
     return { message: "Organization members fetched successfully.", data };
